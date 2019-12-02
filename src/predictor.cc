@@ -1,11 +1,12 @@
 #include "predictor.h"
-#include "predictor_parameters.h"
 #include <assert.h>
 #include <iostream>
 #include <numeric>
 #include <cmath>
 
-void standardise(
+namespace brave_savings {
+
+void standardise_features(
     std::array<double, standardise_feature_count> &features,
     const std::array<double, standardise_feature_count> &means,
     const std::array<double, standardise_feature_count> &scale) {
@@ -15,33 +16,40 @@ void standardise(
 }
 
 double predict(const std::array<double, feature_count> &features) {
+  // Standardise numeric features
   std::array<double, standardise_feature_count> numeric_features;
   std::copy(features.begin(), features.begin() + standardise_feature_count,
     numeric_features.begin());
-  standardise(numeric_features, standardise_feature_means,
+  standardise_features(numeric_features, standardise_feature_means,
     standardise_feature_scale);
 
+  // Create a new feature vector to include all features
   std::array<double, feature_count> standardised_features;
   std::move(numeric_features.begin(), numeric_features.end(),
     standardised_features.begin());
+  // Just copy the rest of the features as-is
   std::copy(features.begin() + standardise_feature_count, features.end(),
     standardised_features.begin() + standardise_feature_count);
   
+  // Calculate the prediction
   double log_prediction = std::inner_product(standardised_features.begin(),
     standardised_features.end(), model_coefficients.begin(), model_intercept);
+  // We know the target is log-scaled but care about the absolute value
   return std::pow(10, log_prediction);
 }
 
-double predict(std::map<std::string, double> features) {
-  std::array<double, feature_count> feature_seq;
+double predict(const std::unordered_map<std::string, double> &features) {
+  std::array<double, feature_count> feature_vector;
   for (int i = 0; i < feature_count; i++) {
-    feature_seq[i] = features[feature_sequence[i]];
+    feature_vector[i] = features[feature_sequence[i]];
   }
-  return predict(feature_seq);
+  return predict(feature_vector);
+}
+
 }
 
 int main() {
-  std::array<double, feature_count> sample = {
+  std::array<double, brave_savings::feature_count> sample = {
     20, 225, 129, 225, 225, 142, 575,
     925, 5, 34662, 3, 317818, 9, 1702888,
     0, 0, 1, 324, 32, 238315, 9,
@@ -57,9 +65,9 @@ int main() {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0       
   };
 
-  std::cout << "Predicted " << predict(sample) << std::endl;
+  std::cout << "Predicted " << brave_savings::predict(sample) << std::endl;
 
-  std::map<std::string, double> featuremap = {
+  std::unordered_map<std::string, double> featuremap = {
   { "thirdParties.Google Analytics.blocked", 0 },
  { "thirdParties.Facebook.blocked", 1 },
  { "thirdParties.Google CDN.blocked", 0 },
@@ -277,6 +285,6 @@ int main() {
  { "resources.total.requestCount", 59 },
  { "resources.total.size", 238413 },
   };
-    std::cout << "Predicted named " << predict(featuremap) << std::endl;
+    std::cout << "Predicted named " << brave_savings::predict(featuremap) << std::endl;
 
 }

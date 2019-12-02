@@ -1,0 +1,45 @@
+
+group("brave-performance-predictor") {
+  public_deps = [
+    ":brave_performance_predictor",
+  ]
+
+  data_deps = [
+    ":brave-performance-predictor-standalone",
+  ]
+}
+
+static_library("brave-performance-predictor-standalone") {
+  complete_static_lib = true
+
+  output_dir = root_out_dir
+
+  configs -= [ "//build/config/compiler:thin_archive" ]
+
+  defines = [
+    "STANDALONE_BUILD",
+  ]
+
+  deps = [
+    ":brave_performance_predictor",
+  ]
+}
+
+source_set("brave_performance_predictor") {
+  
+  output_name = "brave_performance_predictor"
+
+  sources = [
+    "src/predictor.h",
+    "src/predictor.cc",
+    "src/predictor_parameters.h",
+    "src/third_party_extractor.h",
+    "src/third_party_extractor.cc",
+  ]
+
+  deps = [
+    "//base",
+    "//third_party/re2",
+    rebase_path("bat-native-rapidjson", dep_base),
+  ]
+}

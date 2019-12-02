@@ -6,6 +6,8 @@
 #include <vector>
 #include <array>
 
+namespace brave_savings {
+
 const double model_intercept = 5.085506482000759;
 const int feature_count = 216;
 const std::array<double, feature_count> model_coefficients = { 0.123520596111789,
@@ -534,3 +536,5 @@ const std::map<std::string, stdfactor > stdfactor_map = {
   { "resources.total.requestCount", { 80.10089020771514, 57.77650764802925 } },
   { "resources.total.size", { 2027543.2767062315, 3333644.900695055 } },
 };
+
+}
