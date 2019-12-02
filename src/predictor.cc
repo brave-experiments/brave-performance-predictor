@@ -10,7 +10,7 @@ void standardise_features(
     std::array<double, standardise_feature_count> &features,
     const std::array<double, standardise_feature_count> &means,
     const std::array<double, standardise_feature_count> &scale) {
-  for (int i = 0; i < standardise_feature_count; i++) {
+  for (unsigned int i = 0; i < standardise_feature_count; i++) {
     features[i] = (features[i] - means[i])/scale[i];
   }
 }
@@ -40,8 +40,13 @@ double predict(const std::array<double, feature_count> &features) {
 
 double predict(const std::unordered_map<std::string, double> &features) {
   std::array<double, feature_count> feature_vector;
-  for (int i = 0; i < feature_count; i++) {
-    feature_vector[i] = features[feature_sequence[i]];
+  for (unsigned int i = 0; i < feature_count; i++) {
+    auto it = features.find(feature_sequence[i]);
+    if (it != features.end()) {
+      feature_vector[i] = it->second;
+    } else {
+      return 0;
+    }
   }
   return predict(feature_vector);
 }
