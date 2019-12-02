@@ -30,6 +30,8 @@ source_set("brave_performance_predictor") {
   
   output_name = "brave_performance_predictor"
 
+  include_dirs = [ "src" ]
+
   sources = [
     "src/predictor.h",
     "src/predictor.cc",
