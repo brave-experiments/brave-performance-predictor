@@ -38,6 +38,8 @@ source_set("brave_performance_predictor") {
     "src/predictor_parameters.h",
     "src/third_party_extractor.h",
     "src/third_party_extractor.cc",
+    "src/bandwidth_savings_predictor.h",
+    "src/bandwidth_savings_predictor.cc",
   ]
 
   deps = [
