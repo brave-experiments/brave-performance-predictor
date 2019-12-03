@@ -45,7 +45,7 @@ def _load_dataset(path):
     # Define columns
     top_level_cols = ['adblockRequests']
     third_party_cols = [c for c in df.columns if 'thirdParties.' in c]
-    metrics_cols = [c for c in df.columns if 'metrics.' in c]
+    metrics_cols = list(set([c for c in df.columns if 'metrics.' in c]) - set(['metrics.firstCPUIdle', 'metrics.observedLastVisualChange']))
     resources_cols = [c for c in df.columns if 'resources.' in c]
     diagnostics_cols = [c for c in df.columns if 'diagnostics.' in c]
     dom_cols = [c for c in df.columns if 'dom.' in c]

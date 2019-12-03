@@ -42,7 +42,7 @@ TEST_F(BraveSavingsPredictorTest, FeatureArrayGetsPrediction) {
 TEST_F(BraveSavingsPredictorTest, HandlesSpecificVectorExample) {
   // This test needs to be updated for any change in the model
   std::array<double, feature_count> sample = {
-    20, 225, 129, 225, 225, 142, 575,
+    20, 129, 225, 225, 142,
     925, 5, 34662, 3, 317818, 9, 1702888,
     0, 0, 1, 324, 32, 238315, 9,
     90131, 54, 2367498, 59, 2384138,
@@ -58,22 +58,15 @@ TEST_F(BraveSavingsPredictorTest, HandlesSpecificVectorExample) {
   };
 
   double result = brave_savings::predict(sample);
-  EXPECT_EQ((int)result, 794306);
+  EXPECT_EQ((int)result, 794393);
 }
 
 TEST_F(BraveSavingsPredictorTest, HandlesEmptyFeatureset) {
-  std::unordered_map<std::string, double> features;
+  std::unordered_map<std::string, double> features{};
   double result = predict(features);
-  EXPECT_EQ(result, 0);
-}
-
-TEST_F(BraveSavingsPredictorTest, HandlesIncompleteFeatureset) {
-  std::unordered_map<std::string, double> features;
-  for (unsigned int i = 0; i < feature_count - 1; i++) {
-    features[feature_sequence[i]] = 0;
-  }
-  double result = predict(features);
-  EXPECT_EQ(result, 0);
+  std::array<double, feature_count> features_array{};
+  double array_result = predict(features_array);
+  EXPECT_EQ(result, array_result);
 }
 
 TEST_F(BraveSavingsPredictorTest, HandlesCompleteFeatureset) {
@@ -281,12 +274,10 @@ TEST_F(BraveSavingsPredictorTest, HandesSpecificFeaturemapExample) {
     { "thirdParties.Klevu Search.blocked", 0 },
     { "thirdParties.Yandex APIs.blocked", 0 },
     { "adblockRequests", 20 },
-    { "metrics.firstCPUIdle", 225 },
     { "metrics.firstMeaningfulPaint", 129 },
     { "metrics.interactive", 225 },
     { "metrics.observedDomContentLoaded", 225 },
     { "metrics.observedFirstVisualChange", 142 },
-    { "metrics.observedLastVisualChange", 575 },
     { "metrics.observedLoad", 925 },
     { "resources.document.requestCount", 5 },
     { "resources.document.size", 34662 },
@@ -308,7 +299,7 @@ TEST_F(BraveSavingsPredictorTest, HandesSpecificFeaturemapExample) {
     { "resources.total.size", 238413 },
   };
   double result = predict(featuremap);
-  EXPECT_EQ((int)result, 794306);
+  EXPECT_EQ((int)result, 794393);
 }
 
 

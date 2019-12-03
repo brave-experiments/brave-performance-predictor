@@ -39,13 +39,11 @@ double predict(const std::array<double, feature_count> &features) {
 }
 
 double predict(const std::unordered_map<std::string, double> &features) {
-  std::array<double, feature_count> feature_vector;
+  std::array<double, feature_count> feature_vector{};
   for (unsigned int i = 0; i < feature_count; i++) {
     auto it = features.find(feature_sequence[i]);
     if (it != features.end()) {
       feature_vector[i] = it->second;
-    } else {
-      return 0;
     }
   }
   return predict(feature_vector);
