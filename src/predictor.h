@@ -1,3 +1,6 @@
+#ifndef BRAVE_PERFORMANCE_PREDICTOR_PREDICTOR_H_
+#define BRAVE_PERFORMANCE_PREDICTOR_PREDICTOR_H_
+
 #include "predictor_parameters.h"
 
 #include <cstdint>
@@ -21,3 +24,5 @@ double predict(const std::array<double, feature_count> &features);
 double predict(const std::unordered_map<std::string, double> &features);
 
 }
+
+#endif  // BRAVE_PERFORMANCE_PREDICTOR_PREDICTOR_H_

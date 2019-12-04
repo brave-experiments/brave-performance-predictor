@@ -1,11 +1,13 @@
 #include "bandwidth_savings_predictor.h"
+#include "predictor.h"
 
 #include "base/logging.h"
 #include "content/public/common/resource_type.h"
 
 namespace brave_savings {
 
-BandwidthSavingsPredictor::BandwidthSavingsPredictor() = default;
+BandwidthSavingsPredictor::BandwidthSavingsPredictor(ThirdPartyExtractor* third_party_extractor):
+  third_party_extractor_(third_party_extractor) {}
 
 BandwidthSavingsPredictor::~BandwidthSavingsPredictor() = default;
 
@@ -43,9 +45,8 @@ void BandwidthSavingsPredictor::OnSubresourceBlocked(const std::string& resource
 }
 
 void BandwidthSavingsPredictor::OnResourceLoadComplete(const content::mojom::ResourceLoadInfo& resource_load_info) {
-  // LOG(ERROR) << "resource loaded";
-  feature_map_["thirdParties.total.requestCount"] += 1;
-  feature_map_["thirdParties.total.size"] += resource_load_info.raw_body_bytes;
+  feature_map_["resources.total.requestCount"] += 1;
+  feature_map_["resources.total.size"] += resource_load_info.raw_body_bytes;
   std::string resource_type;
   switch(resource_load_info.resource_type) {
     case content::ResourceType::kMainFrame:
@@ -73,19 +74,21 @@ void BandwidthSavingsPredictor::OnResourceLoadComplete(const content::mojom::Res
       resource_type = "other";
       break;
   }
-  feature_map_["thirdParties." + resource_type + ".requestCount"] += 1;
-  feature_map_["thirdParties." + resource_type + ".size"] += resource_load_info.raw_body_bytes;
+  feature_map_["resources." + resource_type + ".requestCount"] += 1;
+  feature_map_["resources." + resource_type + ".size"] += resource_load_info.raw_body_bytes;
 }
 
 double BandwidthSavingsPredictor::predict() {
-  LOG(ERROR) << "Predicting on feature map:";
+  VLOG(3) << "Predicting on feature map:";
   auto it = feature_map_.begin();
   while(it != feature_map_.end()) {
-    LOG(ERROR) << it->first << " :: " << it->second;
+    VLOG(3) << it->first << " :: " << it->second;
     it++;
   }
+  double prediction = ::brave_savings::predict(feature_map_);
+  VLOG(2) << "Predicted saving (bytes): " << prediction;
   feature_map_.clear();
-  return 0;
+  return prediction;
 }
 
 }

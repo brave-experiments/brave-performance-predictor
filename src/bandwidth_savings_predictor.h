@@ -1,3 +1,6 @@
+#ifndef BRAVE_PERFORMANCE_PREDICTOR_BANDWIDTH_SAVINGS_PREDICTOR_H_
+#define BRAVE_PERFORMANCE_PREDICTOR_BANDWIDTH_SAVINGS_PREDICTOR_H_
+
 #include <cstdint>
 #include <string>
 #include <unordered_map>
@@ -10,7 +13,7 @@ namespace brave_savings {
 
 class BandwidthSavingsPredictor {
   public:
-    BandwidthSavingsPredictor();
+    BandwidthSavingsPredictor(ThirdPartyExtractor* third_party_extractor);
     ~BandwidthSavingsPredictor();
 
     void OnPageLoadTimingUpdated(const page_load_metrics::mojom::PageLoadTiming& timing);
@@ -24,3 +27,5 @@ class BandwidthSavingsPredictor {
 };
 
 }
+
+#endif  // BRAVE_PERFORMANCE_PREDICTOR_BANDWIDTH_SAVINGS_PREDICTOR_H_
