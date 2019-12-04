@@ -73,11 +73,22 @@ bool ThirdPartyExtractor::load_entities(const std::string& entities) {
       }
     }
   }
+  initialized_ = true;
 
   return true;
 }
 
+ThirdPartyExtractor::ThirdPartyExtractor(const std::string& entities) {
+  load_entities(entities);
+}
+
 ThirdPartyExtractor::~ThirdPartyExtractor() = default;
+
+//static
+ThirdPartyExtractor* ThirdPartyExtractor::GetInstance() {
+  return base::Singleton<ThirdPartyExtractor>::get();
+}
+
 
 base::Optional<std::string> ThirdPartyExtractor::get_entity(const std::string& origin_or_url) {
   base::Optional<std::string> domain = get_domain_from_origin_or_url(origin_or_url);
