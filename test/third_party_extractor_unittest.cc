@@ -74,63 +74,63 @@ class ThirdPartyExtractorTest : public ::testing::Test {
 };
 
 TEST_F(ThirdPartyExtractorTest, HandlesEmptyJSON) {
-  ThirdPartyExtractor extractor;
-  bool parsed = extractor.load_entities("");
+  ThirdPartyExtractor* extractor = ThirdPartyExtractor::GetInstance();
+  bool parsed = extractor->load_entities("");
   EXPECT_TRUE(!parsed);
 }
 
 TEST_F(ThirdPartyExtractorTest, ParsesJSON) {
-  ThirdPartyExtractor extractor;
-  bool parsed = extractor.load_entities(test_mapping);
+  ThirdPartyExtractor* extractor = ThirdPartyExtractor::GetInstance();
+  bool parsed = extractor->load_entities(test_mapping);
   EXPECT_TRUE(parsed);
 }
 
 TEST_F(ThirdPartyExtractorTest, HandlesInvalidJSON) {
-  ThirdPartyExtractor extractor;
-  bool parsed = extractor.load_entities(R"([{"name":"Google Analytics")");
+  ThirdPartyExtractor* extractor = ThirdPartyExtractor::GetInstance();
+  bool parsed = extractor->load_entities(R"([{"name":"Google Analytics")");
   EXPECT_TRUE(!parsed);
 }
 
 TEST_F(ThirdPartyExtractorTest, HandlesFullDataset) {
-  ThirdPartyExtractor extractor;
+  ThirdPartyExtractor* extractor = ThirdPartyExtractor::GetInstance();
   auto dataset = LoadFile("entities-httparchive-nostats.json");
-  bool parsed = extractor.load_entities(dataset);
+  bool parsed = extractor->load_entities(dataset);
   EXPECT_TRUE(parsed);
 }
 
 TEST_F(ThirdPartyExtractorTest, ExtractsThirdPartyURLTest) {
-  ThirdPartyExtractor extractor;
+  ThirdPartyExtractor* extractor = ThirdPartyExtractor::GetInstance();
   auto dataset = LoadFile("entities-httparchive-nostats.json");
-  extractor.load_entities(dataset);
+  extractor->load_entities(dataset);
   
-  auto entity = extractor.get_entity("https://google-analytics.com/ga.js");
+  auto entity = extractor->get_entity("https://google-analytics.com/ga.js");
   EXPECT_TRUE(entity.has_value());
   EXPECT_EQ(entity.value(), "Google Analytics");
 }
 
 TEST_F(ThirdPartyExtractorTest, ExtractsThirdPartyHostnameTest) {
-  ThirdPartyExtractor extractor;
+  ThirdPartyExtractor* extractor = ThirdPartyExtractor::GetInstance();
   auto dataset = LoadFile("entities-httparchive-nostats.json");
-  extractor.load_entities(dataset);
-  auto entity = extractor.get_entity("google-analytics.com");
+  extractor->load_entities(dataset);
+  auto entity = extractor->get_entity("google-analytics.com");
   EXPECT_TRUE(entity.has_value());
   EXPECT_EQ(entity.value(), "Google Analytics");
 } 
 
 TEST_F(ThirdPartyExtractorTest, ExtractsThirdPartyRootDomainTest) {
-  ThirdPartyExtractor extractor;
+  ThirdPartyExtractor* extractor = ThirdPartyExtractor::GetInstance();
   auto dataset = LoadFile("entities-httparchive-nostats.json");
-  extractor.load_entities(dataset);
-  auto entity = extractor.get_entity("https://test.m.facebook.com");
+  extractor->load_entities(dataset);
+  auto entity = extractor->get_entity("https://test.m.facebook.com");
   EXPECT_TRUE(entity.has_value());
   EXPECT_EQ(entity.value(), "Facebook");
 }
 
 TEST_F(ThirdPartyExtractorTest, HandlesUnrecognisedThirdPartyTest) {
-  ThirdPartyExtractor extractor;
+  ThirdPartyExtractor* extractor = ThirdPartyExtractor::GetInstance();
   auto dataset = LoadFile("entities-httparchive-nostats.json");
-  extractor.load_entities(dataset);
-  auto entity = extractor.get_entity("example.com");
+  extractor->load_entities(dataset);
+  auto entity = extractor->get_entity("example.com");
   EXPECT_TRUE(!entity.has_value());
 }
 
