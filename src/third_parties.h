@@ -5,7 +5,7 @@
 
 namespace brave_savings {
 
-const std::string fixed_config = R"--(
+const std::string static_third_party_config = R"--(
 [
   {
     "name": "Google Analytics",

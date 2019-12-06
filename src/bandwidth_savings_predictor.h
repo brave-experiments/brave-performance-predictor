@@ -20,9 +20,11 @@ class BandwidthSavingsPredictor {
     void OnSubresourceBlocked(const std::string& resource_url);
     void OnResourceLoadComplete(const GURL& main_frame_url, const content::mojom::ResourceLoadInfo& resource_load_info);
     double predict();
+    void Reset();
 
   private:
     ThirdPartyExtractor* third_party_extractor_ = nullptr;
+    GURL main_frame_url_;
     std::unordered_map<std::string, double> feature_map_;
 };
 

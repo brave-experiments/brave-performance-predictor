@@ -57,10 +57,14 @@ void BandwidthSavingsPredictor::OnResourceLoadComplete(
     const GURL& main_frame_url,
     const content::mojom::ResourceLoadInfo& resource_load_info) {
 
+  if (main_frame_url.is_empty() || !main_frame_url.has_host()
+      || !main_frame_url.SchemeIsHTTPOrHTTPS()) {
+    return;
+  }
   bool is_third_party = !net::registry_controlled_domains::SameDomainOrHost(main_frame_url,
       resource_load_info.url,
       net::registry_controlled_domains::INCLUDE_PRIVATE_REGISTRIES);
-  
+  main_frame_url_ = main_frame_url;
   if (is_third_party) {
     feature_map_["resources.third-party.requestCount"] += 1;
     feature_map_["resources.third-party.size"] += resource_load_info.raw_body_bytes;    
@@ -68,6 +72,7 @@ void BandwidthSavingsPredictor::OnResourceLoadComplete(
 
   feature_map_["resources.total.requestCount"] += 1;
   feature_map_["resources.total.size"] += resource_load_info.raw_body_bytes;
+  feature_map_["transfer.total.size"] += resource_load_info.total_received_bytes;
   std::string resource_type;
   switch(resource_load_info.resource_type) {
     case content::ResourceType::kMainFrame:
@@ -100,10 +105,20 @@ void BandwidthSavingsPredictor::OnResourceLoadComplete(
 }
 
 double BandwidthSavingsPredictor::predict() {
+  if (main_frame_url_.is_empty() || !main_frame_url_.has_host()
+      || !main_frame_url_.SchemeIsHTTPOrHTTPS()) {
+    Reset();
+    return 0;
+  }
+  if (feature_map_["transfer.total.size"] > 0) {
+    LOG(ERROR) << "\t " << main_frame_url_ << " \ttotal download size\t " 
+      << feature_map_["transfer.total.size"] << " \tbytes";
+  }
+
   // Short-circuit if nothing got blocked
   if (feature_map_["adblockRequests"] < 1) {
-    feature_map_.clear();
-    return 0;  
+    Reset();
+    return 0;
   }
   if (VLOG_IS_ON(3)) {
     VLOG(3) << "Predicting on feature map:";
@@ -114,9 +129,14 @@ double BandwidthSavingsPredictor::predict() {
     }
   }
   double prediction = ::brave_savings::predict(feature_map_);
-  VLOG(2) << "Predicted saving (bytes): " << prediction;
-  feature_map_.clear();
+  LOG(ERROR) << "\t " << main_frame_url_ << " \testimated saving\t "
+    << prediction << " \tbytes";
+  Reset();
   return prediction;
+}
+
+void BandwidthSavingsPredictor::Reset() {
+  feature_map_.clear();
 }
 
 }
