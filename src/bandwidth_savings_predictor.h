@@ -9,7 +9,7 @@
 #include "content/public/common/resource_load_info.mojom.h"
 #include "components/page_load_metrics/common/page_load_metrics.mojom.h"
 
-namespace brave_savings {
+namespace brave_perf_predictor {
 
 class BandwidthSavingsPredictor {
   public:

@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace brave_savings {
+namespace brave_perf_predictor {
 
 const std::string static_third_party_config = R"--(
 [

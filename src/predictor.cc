@@ -4,7 +4,7 @@
 #include <numeric>
 #include <cmath>
 
-namespace brave_savings {
+namespace brave_perf_predictor {
 
 void standardise_features(
     std::array<double, standardise_feature_count> &features,

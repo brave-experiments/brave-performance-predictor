@@ -1,12 +1,12 @@
 #include <fstream>
 #include <streambuf>
 
-#include "brave/vendor/brave_performance_predictor/src/predictor.h"
+#include "brave/vendor/brave_perf_predictor/src/predictor.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
 #include "base/files/file_path.h"
 
-namespace brave_savings {
+namespace brave_perf_predictor {
 
 class BraveSavingsPredictorTest : public ::testing::Test {
  protected:
@@ -57,7 +57,7 @@ TEST_F(BraveSavingsPredictorTest, HandlesSpecificVectorExample) {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0       
   };
 
-  double result = brave_savings::predict(sample);
+  double result = brave_perf_predictor::predict(sample);
   EXPECT_EQ((int)result, 794393);
 }
 
@@ -303,4 +303,4 @@ TEST_F(BraveSavingsPredictorTest, HandesSpecificFeaturemapExample) {
 }
 
 
-} // namespace brave_savings
+} // namespace brave_perf_predictor

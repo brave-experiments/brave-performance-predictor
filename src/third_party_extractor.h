@@ -13,7 +13,7 @@ namespace base {
   struct DefaultSingletonTraits;
 }
 
-namespace brave_savings {
+namespace brave_perf_predictor {
 
 class ThirdPartyExtractor {
   public:

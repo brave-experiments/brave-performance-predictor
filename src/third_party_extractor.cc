@@ -8,7 +8,7 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
 
-namespace brave_savings {
+namespace brave_perf_predictor {
 
 RE2 DOMAIN_IN_URL_REGEX(":\\/\\/(.*?)(\\/|$)");
 RE2 DOMAIN_CHARACTERS("([a-z0-9.-]+\\.[a-z0-9]+)");

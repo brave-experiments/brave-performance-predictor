@@ -1,12 +1,12 @@
 #include <fstream>
 #include <streambuf>
 
-#include "brave/vendor/brave_performance_predictor/src/third_party_extractor.h"
+#include "brave/vendor/brave_perf_predictor/src/third_party_extractor.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
 #include "base/files/file_path.h"
 
-namespace brave_savings {
+namespace brave_perf_predictor {
 
 const std::string test_mapping = R"(
 [
@@ -27,7 +27,7 @@ const std::string test_mapping = R"(
 
 // Test data directory, relative to source root
 const base::FilePath::CharType kTestDataRelativePath[] =
-  FILE_PATH_LITERAL("brave/vendor/brave_performance_predictor/resources");
+  FILE_PATH_LITERAL("brave/vendor/brave_perf_predictor/resources");
 
 
 class ThirdPartyExtractorTest : public ::testing::Test {
@@ -134,4 +134,4 @@ TEST_F(ThirdPartyExtractorTest, HandlesUnrecognisedThirdPartyTest) {
   EXPECT_TRUE(!entity.has_value());
 }
 
-} // namespace brave_savings
+} // namespace brave_perf_predictor

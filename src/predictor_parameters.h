@@ -5,7 +5,7 @@
 #include <vector>
 #include <array>
 
-namespace brave_savings {
+namespace brave_perf_predictor {
 
 const double model_intercept = 5.085582810808651;
 const int feature_count = 214;

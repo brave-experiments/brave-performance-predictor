@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace brave_savings {
+namespace brave_perf_predictor {
 
 // Computes prediction based on the provided feature vector.
 // It is the client's responsibility to provide features in

@@ -5,7 +5,7 @@
 #include "content/public/common/resource_type.h"
 #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
 
-namespace brave_savings {
+namespace brave_perf_predictor {
 
 BandwidthSavingsPredictor::BandwidthSavingsPredictor(
     ThirdPartyExtractor* third_party_extractor):
@@ -57,14 +57,18 @@ void BandwidthSavingsPredictor::OnResourceLoadComplete(
     const GURL& main_frame_url,
     const content::mojom::ResourceLoadInfo& resource_load_info) {
 
+  // If the resource load info comes without a valid corresponding
+  // main frame URL, ignore it
   if (main_frame_url.is_empty() || !main_frame_url.has_host()
       || !main_frame_url.SchemeIsHTTPOrHTTPS()) {
     return;
   }
+  main_frame_url_ = main_frame_url;
+  
   bool is_third_party = !net::registry_controlled_domains::SameDomainOrHost(main_frame_url,
       resource_load_info.url,
       net::registry_controlled_domains::INCLUDE_PRIVATE_REGISTRIES);
-  main_frame_url_ = main_frame_url;
+  
   if (is_third_party) {
     feature_map_["resources.third-party.requestCount"] += 1;
     feature_map_["resources.third-party.size"] += resource_load_info.raw_body_bytes;    
@@ -128,7 +132,7 @@ double BandwidthSavingsPredictor::predict() {
       it++;
     }
   }
-  double prediction = ::brave_savings::predict(feature_map_);
+  double prediction = ::brave_perf_predictor::predict(feature_map_);
   LOG(ERROR) << "\t " << main_frame_url_ << " \testimated saving\t "
     << prediction << " \tbytes";
   Reset();
