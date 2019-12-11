@@ -6,13 +6,19 @@
 
 namespace brave_perf_predictor {
 
-void standardise_features(
+bool standardise_features_no_outliers(
     std::array<double, standardise_feature_count> &features,
     const std::array<double, standardise_feature_count> &means,
     const std::array<double, standardise_feature_count> &scale) {
   for (unsigned int i = 0; i < standardise_feature_count; i++) {
     features[i] = (features[i] - means[i])/scale[i];
   }
+  double outlier_threshold = 3;
+  for (unsigned int i = 0; i < standardise_feature_count; i++) {
+    if (features[i] > outlier_threshold || features[i] < -outlier_threshold)
+      return true;
+  }
+  return false;
 }
 
 double predict(const std::array<double, feature_count> &features) {
@@ -20,8 +26,12 @@ double predict(const std::array<double, feature_count> &features) {
   std::array<double, standardise_feature_count> numeric_features;
   std::copy(features.begin(), features.begin() + standardise_feature_count,
     numeric_features.begin());
-  standardise_features(numeric_features, standardise_feature_means,
+  bool has_outliers = standardise_features_no_outliers(
+    numeric_features, standardise_feature_means,
     standardise_feature_scale);
+  if (has_outliers) {
+    return 0;
+  }
 
   // Create a new feature vector to include all features
   std::array<double, feature_count> standardised_features;
